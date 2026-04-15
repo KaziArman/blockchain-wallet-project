@@ -1,8 +1,8 @@
-
 import streamlit as st
 from web3 import Web3
 from web3.middleware import ExtraDataToPOAMiddleware
 import json, sys, time
+
 
 # Parse port from command line args (after --) or env var
 import os
@@ -36,6 +36,7 @@ KNOWN_ACCOUNTS = {
 }
 
 
+
 @st.cache_resource
 def get_web3():
     """Create and cache web3 connection."""
@@ -54,6 +55,7 @@ def get_contract(_web3):
     return _web3.eth.contract(
         address=Web3.to_checksum_address(address), abi=abi
     )
+
 
 
 def send_transaction(web3, contract_func, sender_address, sender_key, value_wei=0):
@@ -135,7 +137,6 @@ contract = get_contract(web3)
 contract_owner = contract.functions.owner().call()
 
 
-
 st.sidebar.title("Login")
 
 login_method = st.sidebar.radio(
@@ -146,12 +147,51 @@ login_method = st.sidebar.radio(
 if login_method == "Select known account":
     selected = st.sidebar.selectbox("Account:", list(KNOWN_ACCOUNTS.keys()))
     _address = KNOWN_ACCOUNTS[selected]["address"]
+    #_key = KNOWN_ACCOUNTS[selected]["private_key"]
     _key = st.sidebar.text_input("Private key:", type="password", placeholder="0x...")
     _name = selected
 else:
     _name = st.sidebar.text_input("Your name:", value="New User")
-    _address = st.sidebar.text_input("Wallet address:", placeholder="0x...")
-    _key = st.sidebar.text_input("Private key:", type="password", placeholder="0x...")
+
+    # --- Generate New Account Button ---
+    if st.sidebar.button("Generate new wallet", use_container_width=True):
+        new_acct = web3.eth.account.create()
+        st.session_state["generated_address"] = new_acct.address
+        st.session_state["generated_key"] = new_acct.key.hex()
+
+        # Auto-fund from Jay (100 ETH)
+        jay_addr = Web3.to_checksum_address("0xfe3b557e8fb62b89f4916b721be55ceb828dbd73")
+        jay_key = "0x8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63"
+        try:
+            tx = {
+                "from": jay_addr,
+                "to": Web3.to_checksum_address(new_acct.address),
+                "value": Web3.to_wei(100, "ether"),
+                "nonce": web3.eth.get_transaction_count(jay_addr),
+                "gas": 21000,
+                "gasPrice": 0,
+            }
+            signed = web3.eth.account.sign_transaction(tx, jay_key)
+            tx_hash = web3.eth.send_raw_transaction(signed.raw_transaction)
+            web3.eth.wait_for_transaction_receipt(tx_hash)
+            st.session_state["generated_funded"] = True
+        except Exception as e:
+            st.session_state["generated_funded"] = False
+            st.session_state["generated_error"] = str(e)
+
+    # Show generated values or empty fields
+    default_addr = st.session_state.get("generated_address", "")
+    default_key = st.session_state.get("generated_key", "")
+
+    _address = st.sidebar.text_input("Wallet address:", value=default_addr, placeholder="0x...")
+    _key = st.sidebar.text_input("Private key:", value=default_key, type="password", placeholder="0x...")
+
+    if st.session_state.get("generated_funded"):
+        st.sidebar.success("New wallet generated and funded with 100 ETH!")
+    elif st.session_state.get("generated_error"):
+        st.sidebar.error(f"Funding failed: {st.session_state['generated_error']}")
+    elif default_addr:
+        st.sidebar.info("Wallet generated. Click Login to continue.")
 
 # --- Login Button ---
 login_clicked = st.sidebar.button("Login", type="primary", use_container_width=True)
@@ -199,6 +239,9 @@ st.sidebar.write(f"**Node:** `{NODE_URL}`")
 st.sidebar.write(f"**Latest block:** #{web3.eth.block_number}")
 st.sidebar.write(f"**Contract:** {shorten(contract.address)}")
 
+# ============================================================
+# MAIN PAGE
+# ============================================================
 
 st.title("BasicWallet Dashboard")
 st.caption(f"Contract: `{contract.address}` | Owner: `{shorten(contract_owner)}`")
@@ -219,6 +262,9 @@ with col3:
 
 st.divider()
 
+# ============================================================
+# TABS
+# ============================================================
 
 tab_deposit, tab_withdraw, tab_balances, tab_blocks, tab_history = st.tabs([
     "Deposit", "Withdraw", "All balances", "Block explorer", "Transaction log"
