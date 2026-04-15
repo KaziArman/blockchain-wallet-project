@@ -138,6 +138,15 @@ services:
     depends_on:
       - qbft-launch-bootnode1
 
+  wallet-ui-device2:
+    build: ../../test_smartcontracts/q1_wallet
+    ports:
+      - "8501:8501"
+    environment:
+      - NODE_URL=http://host.docker.internal:8545
+    volumes:
+      - ../../test_smartcontracts/q1_wallet:/app
+
 
   ipfs-node1:
     image: "ipfs/go-ipfs"

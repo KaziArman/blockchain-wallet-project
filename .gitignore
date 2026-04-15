@@ -1,0 +1,6 @@
+# Ignore blockchain runtime data
+**/Node1/data/
+**/Node2/data/
+
+# Ignore the private README
+DO NOT SYBMIT Q1_README.md
