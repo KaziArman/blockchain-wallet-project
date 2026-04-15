@@ -51,7 +51,10 @@ services:
 
   qbft-launch-bootnode1:
     image: hyperledger/besu:latest
-    network_mode: "host"
+    ports:
+      - "30303:30303/tcp"
+      - "30303:30303/udp"
+      - "8545:8545"
     volumes:
       - .:/var/tmp/QBFT-Network
     working_dir: /var/tmp/QBFT-Network/Node1/
@@ -59,7 +62,8 @@ services:
       - --data-path=/var/tmp/QBFT-Network/Node1/data/
       - --genesis-file=../networkFiles/genesis.json
       - --rpc-http-enabled
-      - --p2p-host=10.227.86.209
+      - --rpc-http-host=0.0.0.0
+      - --p2p-host=192.168.1.239
       - --rpc-http-api=ETH,NET,QBFT,WEB3,ADMIN
       - --host-allowlist="*"
       - --rpc-http-cors-origins="all"
@@ -74,8 +78,8 @@ services:
     command:
       - --data-path=/var/tmp/QBFT-Network/Node2/data/
       - --genesis-file=../networkFiles/genesis.json
-      - --bootnodes=enode://f48ee2c02d362e3bfcda36090c42939c205bb94256107f1df55a097d93bcb1a08fe7f5657efc19cbc2751758ded6566394f04e9f92483026af5951efc69e21f1@10.227.85.9:30303
-      - --p2p-host=127.0.0.1
+      - --bootnodes=enode://4506ec1d7c25c32438d661ed6f274ac62482c529f8f70eea6197bc6c396a3328b766b8210068246f434fc251a4b89af65742dedba74a6bda6b37d3fcbc3a9c16@10.227.86.209:30303
+      - --p2p-host=10.227.86.209
       - --p2p-port=30304
       - --rpc-http-port=8546
       - --rpc-http-enabled
@@ -121,6 +125,18 @@ services:
       - --host-allowlist="*"
       - --rpc-http-cors-origins="all"
       - --profile=ENTERPRISE
+
+
+  wallet-ui:
+    build: ../../test_smartcontracts/q1_wallet
+    ports:
+      - "8501:8501"
+    environment:
+      - NODE_URL=http://host.docker.internal:8545
+    volumes:
+      - ../../test_smartcontracts/q1_wallet:/app
+    depends_on:
+      - qbft-launch-bootnode1
 
 
   ipfs-node1:
