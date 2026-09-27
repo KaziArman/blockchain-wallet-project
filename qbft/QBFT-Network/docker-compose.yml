@@ -127,29 +127,51 @@ services:
       - --profile=ENTERPRISE
 
 
+<<<<<<< HEAD
   wallet-ui:
     build: ../../test_smartcontracts/q1_wallet
+=======
+  app-ui:
+    build: ../../test_smartcontracts/gridflex
+>>>>>>> 2b71d4f0da5ebf68095f8274ff2b6df4a8501cc1
     ports:
       - "8501:8501"
     environment:
       - NODE_URL=http://host.docker.internal:8545
     volumes:
+<<<<<<< HEAD
       - ../../test_smartcontracts/q1_wallet:/app
     depends_on:
       - qbft-launch-bootnode1
 
   wallet-ui-device2:
     build: ../../test_smartcontracts/q1_wallet
+=======
+      - ../../test_smartcontracts/gridflex:/app
+    depends_on:
+      - qbft-launch-bootnode1
+
+  app-ui-device2:
+    build: ../../test_smartcontracts/gridflex
+>>>>>>> 2b71d4f0da5ebf68095f8274ff2b6df4a8501cc1
     ports:
       - "8501:8501"
     environment:
       - NODE_URL=http://host.docker.internal:8545
     volumes:
+<<<<<<< HEAD
       - ../../test_smartcontracts/q1_wallet:/app
 
 
   ipfs-node1:
     image: "ipfs/go-ipfs"
+=======
+      - ../../test_smartcontracts/gridflex:/app
+
+
+  ipfs-node1:
+    image: "ipfs/kubo:v0.28.0"
+>>>>>>> 2b71d4f0da5ebf68095f8274ff2b6df4a8501cc1
     environment:
       LIBP2P_FORCE_PNET: "1"
       IPFS_SWARM_KEY: |
