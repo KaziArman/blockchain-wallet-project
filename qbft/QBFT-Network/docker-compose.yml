@@ -127,29 +127,29 @@ services:
       - --profile=ENTERPRISE
 
 
-  wallet-ui:
-    build: ../../test_smartcontracts/q1_wallet
+  app-ui:
+    build: ../../test_smartcontracts/gridflex
     ports:
       - "8501:8501"
     environment:
       - NODE_URL=http://host.docker.internal:8545
     volumes:
-      - ../../test_smartcontracts/q1_wallet:/app
+      - ../../test_smartcontracts/gridflex:/app
     depends_on:
       - qbft-launch-bootnode1
 
-  wallet-ui-device2:
-    build: ../../test_smartcontracts/q1_wallet
+  app-ui-device2:
+    build: ../../test_smartcontracts/gridflex
     ports:
       - "8501:8501"
     environment:
       - NODE_URL=http://host.docker.internal:8545
     volumes:
-      - ../../test_smartcontracts/q1_wallet:/app
+      - ../../test_smartcontracts/gridflex:/app
 
 
   ipfs-node1:
-    image: "ipfs/go-ipfs"
+    image: "ipfs/kubo:v0.28.0"
     environment:
       LIBP2P_FORCE_PNET: "1"
       IPFS_SWARM_KEY: |

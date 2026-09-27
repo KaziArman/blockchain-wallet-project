@@ -11,30 +11,66 @@
     },
     "nonce": "0x0",
     "timestamp": "0x58ee40ba",
-    "gasLimit": "0x47b760",
+    "gasLimit": "0x1000000",
     "difficulty": "0x1",
     "mixHash": "0x63746963616c2062797a616e74696e65206661756c7420746f6c6572616e6365",
     "coinbase": "0x0000000000000000000000000000000000000000",
     "alloc": {
       "fe3b557e8fb62b89f4916b721be55ceb828dbd73": {
         "privateKey": "8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63",
-        "comment": "private key and this comment are ignored.  In a real chain, the private key should NOT be stored",
+        "comment": "Grid Admin",
         "balance": "0xad78ebc5ac6200000"
       },
       "627306090abaB3A6e1400e9345bC60c78a8BEf57": {
         "privateKey": "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3",
-        "comment": "private key and this comment are ignored.  In a real chain, the private key should NOT be stored",
+        "comment": "Home-01",
         "balance": "90000000000000000000000"
       },
       "f17f52151EbEF6C7334FAD080c5704D77216b732": {
         "privateKey": "ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
-        "comment": "private key and this comment are ignored.  In a real chain, the private key should NOT be stored",
+        "comment": "Home-02",
         "balance": "90000000000000000000000"
       },
       "C3d816631b731783686C670020C2bf0C99DA5698" : {
         "privateKey" : "e14b727a6ba13a5515d5c818c4f886d89c790989de708b1272e8c623ae4ead0d",
-        "comment" : "private key and this comment are ignored.  In a real chain, the private key should NOT be stored",
+        "comment" : "Home-04",
         "balance" : "90000000000000000000000"
+      },
+      
+      "0x4c7C6e60b4e0EA45DC33C1fc7D28497A29F36F7d" : {
+          "privateKey": "0xa0a7d0feb4a1110a2d25572b4f5c38a5a93844df1a74be92b4d3c7ed1004aab3",
+          "comment" : "Utility (Power Grid)",
+          "balance" : "90000000000000000000000"
+      },
+
+      "0xEe3ba2Cb622FFc538B506B535aa0d3e5B641678F" : {
+          "privateKey": "0xcb553eadd90af3a15f2501af1fbe2d73fef30657a9edb8ebc82d49170ad35905",
+          "comment" : "Home-03",
+          "balance" : "90000000000000000000000"
+      },
+
+      "0xc610E5F797b1Aef603b4319A0024691Bb42Bd999" : {
+          "privateKey": "0x4ae649a1f892f210c57048ad27bafc593a9f3280556d3aaf31db427c009e585a",
+          "comment" : "ChemPlant-01",
+          "balance" : "90000000000000000000000"
+      },
+
+      "0x40c7cc76844CE04B6b37ce3D951B6132c929f0cD" : {
+          "privateKey": "0xeb5242e02899507c5d170cc0486fe91ce97d7d7f95c78d5d716d65d2d7c3a9ce",
+          "comment" : "Home-05",
+          "balance" : "90000000000000000000000"   
+      },
+
+      "0x8099948Ea5F0712823D1ba84e542AF5d5118e3FC" : {
+          "privateKey": "0x7b3f4654c0861f1fe3c56a10c6809f8db5166f49c802553ae4ac9172dbc8a84d",
+          "comment" : "School-01",
+          "balance" : "90000000000000000000000"
+      },
+
+      "0x3aE689841E16684cE3Ac9b61587E2599912905F2" : {
+          "privateKey": "0xc8dcd1de0c98961a89f074ce023eb6341f6c8c038371404d7f5764d336c807cc",
+          "comment" : "Clinic-01",
+          "balance" : "90000000000000000000000"
       }
     }
   },
