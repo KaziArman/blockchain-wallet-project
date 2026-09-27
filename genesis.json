@@ -1,0 +1,20 @@
+{
+  "config": {
+    "chainId": 6174929,
+    "londonBlock": 0,
+    "contractSizeLimit": 2147483647,
+    "ethash": {
+      "fixeddifficulty": 10
+    }
+  },
+  "nonce": "0x42",
+  "zeroBaseFee": true,
+  "timestamp": "0x0",
+  "extraData": "",
+  "gasLimit": "0x2fefd8",
+  "difficulty": "0x0",
+  "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "coinbase": "0x0000000000000000000000000000000000000000",
+  "alloc": {
+  }
+}

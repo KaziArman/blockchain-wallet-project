@@ -1,0 +1,10 @@
+- --bootnodes=Enode URL enode://c0c0e730f0c72c3199e164aa476ad90e4ecb958889c1000241febbb8a2f878169ba25b393870667bb42f177cdf90664b94beec07e5b0ab1a23aadfa95f49cb70@192.168.1.239:30303
+- --p2p-host=`another device's IP`
+
+Wallet, Enode URL enode://17439c656027b2ee6c85869e88c827b5abc495001976ce74170320b6e8eb87e92c60ac38ea28d3b2aedd72c7cc55cd8c9cd12a8a34b9eab673d86fc526306399@192.168.1.239:30303
+
+https://disyslab.notion.site/creating-a-blockchain-network
+
+docker compose up test-smartcontracts -d
+docker exec -it qbft-network-test-smartcontracts-1 bash -c "python add_peer.py 8545 enode://<FULL_ENODE_ID>@<DEVICE1_IP>:30303"
+docker exec -it qbft-network-test-smartcontracts-1 bash -c "python compile_SC_qbft.py 0 8545"

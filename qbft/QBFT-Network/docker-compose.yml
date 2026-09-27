@@ -1,0 +1,175 @@
+services:
+  test-smartcontracts:
+    image: pramanan3/smartcontract_test:latest
+    network_mode: "host"
+    working_dir: /home/test_smartcontracts/
+    volumes:
+      - ../../test_smartcontracts:/home/test_smartcontracts
+
+  qbft-configure-genesis:
+    image: hyperledger/besu:latest
+    volumes:
+      - .:/var/tmp/QBFT-Network
+    working_dir: /var/tmp/QBFT-Network
+    entrypoint: ["besu"]
+    command:
+      - operator
+      - generate-blockchain-config
+      - --config-file=/var/tmp/QBFT-Network/qbftConfigFile.json
+      - --to=/var/tmp/QBFT-Network/networkFiles/
+      - --private-key-file-name=key
+
+    healthcheck:
+      test: [ "CMD", "test", "-f", "/var/tmp/QBFT-Network/networkFiles/genesis.json" ]
+      interval: 5s
+      retries: 3
+      start_period: 5s
+      timeout: 3s
+
+  move-keys:
+    image: alpine:3.19.0
+    volumes:
+      - .:/var/tmp/QBFT-Network/
+    working_dir: /var/tmp/QBFT-Network/
+    command:
+      - sh
+      - -c
+      - |
+        mkdir -p ./Node1/data/
+        find ./networkFiles/keys/* -type f -exec mv {} ./Node1/data/ \;
+
+  clean-data:
+    image: alpine:3.19.0
+    volumes:
+      - .:/var/tmp/QBFT-Network/
+    working_dir: /var/tmp/QBFT-Network/
+    command:
+      - sh
+      - -c
+      - |
+        ./clean.sh
+
+  qbft-launch-bootnode1:
+    image: hyperledger/besu:latest
+    ports:
+      - "30303:30303/tcp"
+      - "30303:30303/udp"
+      - "8545:8545"
+    volumes:
+      - .:/var/tmp/QBFT-Network
+    working_dir: /var/tmp/QBFT-Network/Node1/
+    command:
+      - --data-path=/var/tmp/QBFT-Network/Node1/data/
+      - --genesis-file=../networkFiles/genesis.json
+      - --rpc-http-enabled
+      - --rpc-http-host=0.0.0.0
+      - --p2p-host=192.168.1.239
+      - --rpc-http-api=ETH,NET,QBFT,WEB3,ADMIN
+      - --host-allowlist="*"
+      - --rpc-http-cors-origins="all"
+      - --profile=ENTERPRISE
+
+  qbft-launch-node2:
+    image: hyperledger/besu:latest
+    network_mode: "host"
+    volumes:
+      - .:/var/tmp/QBFT-Network
+    working_dir: /var/tmp/QBFT-Network/Node2/
+    command:
+      - --data-path=/var/tmp/QBFT-Network/Node2/data/
+      - --genesis-file=../networkFiles/genesis.json
+      - --bootnodes=enode://4506ec1d7c25c32438d661ed6f274ac62482c529f8f70eea6197bc6c396a3328b766b8210068246f434fc251a4b89af65742dedba74a6bda6b37d3fcbc3a9c16@10.227.86.209:30303
+      - --p2p-host=10.227.86.209
+      - --p2p-port=30304
+      - --rpc-http-port=8546
+      - --rpc-http-enabled
+      - --rpc-http-api=ETH,NET,QBFT,WEB3,ADMIN
+      - --host-allowlist="*"
+      - --rpc-http-cors-origins="all"
+      - --profile=ENTERPRISE
+
+  qbft-launch-node3:
+    image: hyperledger/besu:latest
+    network_mode: "host"
+    volumes:
+      - .:/var/tmp/QBFT-Network
+    working_dir: /var/tmp/QBFT-Network/Node3/
+    command:
+      - --data-path=/var/tmp/QBFT-Network/Node3/data/
+      - --genesis-file=../networkFiles/genesis.json
+      - --bootnodes=enode://1fb4c1a1b13b4cfe42dd610ccab692a216a5d332150dddf735113007df56413ff62f5832f5f8e8e7a496bc55f9a53d213578b1dfee373aa72540aecfa697c162@127.0.0.1:30303
+      - --p2p-host=127.0.0.1
+      - --p2p-port=30305
+      - --rpc-http-port=8547
+      - --rpc-http-enabled
+      - --rpc-http-api=ETH,NET,QBFT,WEB3,ADMIN
+      - --host-allowlist="*"
+      - --rpc-http-cors-origins="all"
+      - --profile=ENTERPRISE
+
+  qbft-launch-node4:
+    image: hyperledger/besu:latest
+    network_mode: "host"
+    volumes:
+      - .:/var/tmp/QBFT-Network
+    working_dir: /var/tmp/QBFT-Network/Node4/
+    command:
+      - --data-path=/var/tmp/QBFT-Network/Node4/data/
+      - --genesis-file=../networkFiles/genesis.json
+      - --bootnodes=enode://1fb4c1a1b13b4cfe42dd610ccab692a216a5d332150dddf735113007df56413ff62f5832f5f8e8e7a496bc55f9a53d213578b1dfee373aa72540aecfa697c162@127.0.0.1:30303
+      - --p2p-host=127.0.0.1
+      - --p2p-port=30306
+      - --rpc-http-port=8548
+      - --rpc-http-enabled
+      - --rpc-http-api=ETH,NET,QBFT,WEB3,ADMIN
+      - --host-allowlist="*"
+      - --rpc-http-cors-origins="all"
+      - --profile=ENTERPRISE
+
+
+  wallet-ui:
+    build: ../../test_smartcontracts/q1_wallet
+    ports:
+      - "8501:8501"
+    environment:
+      - NODE_URL=http://host.docker.internal:8545
+    volumes:
+      - ../../test_smartcontracts/q1_wallet:/app
+    depends_on:
+      - qbft-launch-bootnode1
+
+  wallet-ui-device2:
+    build: ../../test_smartcontracts/q1_wallet
+    ports:
+      - "8501:8501"
+    environment:
+      - NODE_URL=http://host.docker.internal:8545
+    volumes:
+      - ../../test_smartcontracts/q1_wallet:/app
+
+
+  ipfs-node1:
+    image: "ipfs/go-ipfs"
+    environment:
+      LIBP2P_FORCE_PNET: "1"
+      IPFS_SWARM_KEY: |
+        /key/swarm/psk/1.0.0/
+        /base16/
+        76acbaacdcc35520c4b9fe8e87e32f45f3405d4208c8b58bd29a55fadee5e922
+    ports:
+      - "4001:4001"
+      - "5001:5001"
+      - "8080:8080"
+
+  ipfs-node2:
+    image: "ipfs/go-ipfs"
+    environment:
+      LIBP2P_FORCE_PNET: "1"
+      IPFS_SWARM_KEY: |
+        /key/swarm/psk/1.0.0/
+        /base16/
+        76acbaacdcc35520c4b9fe8e87e32f45f3405d4208c8b58bd29a55fadee5e922
+    ports:
+      - "4002:4001"
+      - "5002:5001"
+      - "8081:8080"
